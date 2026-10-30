@@ -1,0 +1,32 @@
+# Render Blueprint for the SmartStock backend (Node/Express + Prisma).
+# Deploys the backend web service only. The database is Neon (external, free tier); the frontend
+# is Vercel. Create those separately and wire the env vars below.
+#
+# Usage: push this repo to GitHub, then in Render: New > Blueprint > pick this repo.
+services:
+  - type: web
+    name: smartstock-backend
+    runtime: node
+    plan: free
+    # Build from the monorepo root so npm workspaces resolve.
+    buildCommand: npm run render:build
+    # Runs `prisma migrate deploy` (applies migrations to Neon) then starts the server.
+    startCommand: npm run render:start
+    # Render injects PORT automatically; the app reads it.
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      # Paste your Neon connection string in the Render dashboard (marked sync:false = secret,
+      # set manually, never committed).
+      - key: DATABASE_URL
+        sync: false
+      # Generate a long random value (Render can auto-generate it).
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: "8h"
+      # The deployed frontend origin (your Vercel URL). Set after the frontend is deployed, e.g.
+      # https://smartstock.vercel.app  — comma-separate multiple origins if needed.
+      - key: CORS_ORIGIN
+        sync: false

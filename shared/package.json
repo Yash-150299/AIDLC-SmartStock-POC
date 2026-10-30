@@ -1,0 +1,21 @@
+{
+  "name": "@smartstock/shared",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared cross-unit DTOs, enums, error codes, and business rules for SmartStock.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}

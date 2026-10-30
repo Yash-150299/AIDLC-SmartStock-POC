@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node", "jest"],
+    "noEmit": true,
+    "rootDir": ".",
+    "esModuleInterop": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "shared/src/**/*.ts",
+    "backend/src/**/*.ts",
+    "shared/test/**/*.ts",
+    "backend/test/**/*.ts"
+  ]
+}

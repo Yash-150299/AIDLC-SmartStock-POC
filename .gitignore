@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Prisma generated client
+shared/node_modules/
+backend/node_modules/
+**/generated/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Local portable PostgreSQL (do NOT commit — ~366MB zip + data dir)
+.pgsql/
+.pgdata/
+postgresql-*-windows-x64-binaries.zip
+_*.txt
+
+# AIDLC workflow records (local method state, not app code)
+aidlc/
+.kiro/
+
+# Build output (web)
+web/dist/
+
+# Test coverage output
+coverage/

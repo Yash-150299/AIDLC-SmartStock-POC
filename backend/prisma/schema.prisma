@@ -1,0 +1,94 @@
+// SmartStock Prisma schema (data-models.md, Q4=A).
+// PostgreSQL; status is derived at read time (never stored). Token denylist supports stateless-JWT
+// logout/invalidation (DB-3).
+//
+// Surrogate primary keys are auto-increment integers. `token_denylist.jti` is NOT a surrogate key —
+// it is the JWT's own ID (a UUID carried by the token) and therefore stays a string.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AdjustmentType {
+  STOCK_IN
+  STOCK_OUT
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  isDemo       Boolean  @default(true) @map("is_demo")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  transactions InventoryTransaction[]
+
+  @@map("users")
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  isDemo    Boolean  @default(true) @map("is_demo")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  products Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id           Int      @id @default(autoincrement())
+  sku          String   @unique
+  name         String
+  categoryId   Int      @map("category_id")
+  currentStock Int      @default(0) @map("current_stock")
+  reorderLevel Int      @default(0) @map("reorder_level")
+  unitPrice    Decimal  @default(0) @map("unit_price") @db.Decimal(12, 2)
+  description  String?
+  isDemo       Boolean  @default(true) @map("is_demo")
+  lastUpdated  DateTime @default(now()) @map("last_updated")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  category     Category               @relation(fields: [categoryId], references: [id])
+  transactions InventoryTransaction[]
+
+  @@index([name])
+  @@index([categoryId])
+  @@index([unitPrice])
+  @@index([currentStock])
+  @@map("products")
+}
+
+model InventoryTransaction {
+  id             Int            @id @default(autoincrement())
+  productId      Int            @map("product_id")
+  type           AdjustmentType
+  quantity       Int
+  reason         String
+  resultingStock Int            @map("resulting_stock")
+  createdBy      Int?           @map("created_by")
+  createdAt      DateTime       @default(now()) @map("created_at")
+
+  product Product @relation(fields: [productId], references: [id])
+  user    User?   @relation(fields: [createdBy], references: [id])
+
+  @@index([productId, createdAt(sort: Desc)])
+  @@map("inventory_transactions")
+}
+
+model TokenDenylist {
+  jti       String   @id
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([expiresAt])
+  @@map("token_denylist")
+}

@@ -38,3 +38,6 @@ web/dist/
 
 # Test coverage output
 coverage/
+
+# Vite dev cache
+web/.vite/

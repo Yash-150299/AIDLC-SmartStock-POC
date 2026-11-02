@@ -28,7 +28,12 @@ export default defineConfig({
   ],
   use: {
     baseURL: BASE_URL,
-    headless: true,
+    // Headed/headless and slow-motion are env-controlled so the same config serves CI and demos:
+    //   HEADED=1 SLOWMO=600  -> visible browser, 600ms between actions (easy to watch)
+    headless: process.env.HEADED !== '1',
+    launchOptions: {
+      slowMo: process.env.SLOWMO ? Number(process.env.SLOWMO) : 0,
+    },
     actionTimeout: 20_000,
     navigationTimeout: 60_000,
     screenshot: 'only-on-failure',

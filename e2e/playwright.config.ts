@@ -16,9 +16,11 @@ const BASE_URL = process.env.BASE_URL ?? 'https://aidlc-smartstock-poc.vercel.ap
 
 export default defineConfig({
   testDir,
+  // Warm the free-tier backend (cold start ~30-60s) before any test runs.
+  globalSetup: './global-setup.ts',
   // The live backend is on Render's free tier and may cold-start (~30-60s), so be generous.
-  timeout: 90_000,
-  expect: { timeout: 20_000 },
+  timeout: 120_000,
+  expect: { timeout: 25_000 },
   fullyParallel: false,
   workers: 1,
   retries: 0,
